@@ -55,7 +55,7 @@ L.TileLayer.Zoomify = L.TileLayer.extend({
 			imageSize = this._imageSize[zoom];
 			if (imageSize.x * tolerance < mapSize.x && imageSize.y * tolerance < mapSize.y) {
 				return zoom;
-			}			
+			}
 			zoom--;
 		}
 
@@ -77,11 +77,11 @@ L.TileLayer.Zoomify = L.TileLayer.extend({
 
 		if (tilePoint.x === gridSize.x - 1) {
 			tile.style.width = imageSize.x - (tileSize * (gridSize.x - 1)) + 'px';
-		} 
+		}
 
 		if (tilePoint.y === gridSize.y - 1) {
-			tile.style.height = imageSize.y - (tileSize * (gridSize.y - 1)) + 'px';			
-		} 
+			tile.style.height = imageSize.y - (tileSize * (gridSize.y - 1)) + 'px';
+		}
 
 		L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome || L.Browser.android23);
 
@@ -94,7 +94,12 @@ L.TileLayer.Zoomify = L.TileLayer.extend({
 	},
 
 	getTileUrl: function (tilePoint) {
-		return this._url + 'TileGroup' + this._getTileGroup(tilePoint) + '/' + this._map.getZoom() + '-' + tilePoint.x + '-' + tilePoint.y + '.jpg';
+		return L.Util.template(this._url, L.extend({
+			s: this._getSubdomain(tilePoint),
+			z: tilePoint.z,
+			x: tilePoint.x,
+			y: tilePoint.y
+		}, this.options));
 	},
 
 	_getTileGroup: function (tilePoint) {
@@ -104,8 +109,8 @@ L.TileLayer.Zoomify = L.TileLayer.extend({
 
 		for (z = 0; z < zoom; z++) {
 			gridSize = this._gridSize[z];
-			num += gridSize.x * gridSize.y; 
-		}	
+			num += gridSize.x * gridSize.y;
+		}
 
 		num += tilePoint.y * this._gridSize[zoom].x + tilePoint.x;
       	return Math.floor(num / 256);;
